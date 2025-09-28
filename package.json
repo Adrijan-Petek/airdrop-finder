@@ -1,0 +1,19 @@
+{
+  "name": "airdrop-finder",
+  "version": "1.0.0",
+  "description": "Airdrop Finder \u2014 scans wallets across Base, Optimism and Arbitrum for claimable airdrops and emits daily reports.",
+  "main": "src/airdrops.js",
+  "scripts": {
+    "start": "node src/airdrops.js",
+    "scan:once": "node src/airdrops.js --once",
+    "lint": "echo \"No linter configured\""
+  },
+  "author": "Crypto Mobb",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^6.10.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

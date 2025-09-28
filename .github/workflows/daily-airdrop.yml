@@ -1,0 +1,36 @@
+name: Daily Airdrop Scan
+on:
+  schedule:
+    - cron: '0 9 * * *' # daily at 09:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: npm install
+
+      - name: Run airdrop scan
+        env:
+          BASE_RPC: ${{ secrets.BASE_RPC }}
+          OP_RPC: ${{ secrets.OP_RPC }}
+          ARBITRUM_RPC: ${{ secrets.ARBITRUM_RPC }}
+          SCAN_WEBHOOK_URL: ${{ secrets.REWARD_WEBHOOK }}
+        run: |
+          mkdir -p reports
+          npm run scan:once
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: airdrop-report
+          path: reports/*.json

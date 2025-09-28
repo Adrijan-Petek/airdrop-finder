@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "src/airdrops.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/airdrop-scan", "dest": "/src/airdrops.js" }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "airdrops": [
+    {
+      "name": "Base Community Drop",
+      "chain": "base",
+      "type": "contract",
+      "contract": "0x0000000000000000000000000000000000000000",
+      "method": "claimable(address)"
+    },
+    {
+      "name": "OP Snapshot Drop",
+      "chain": "optimism",
+      "type": "snapshot",
+      "snapshotFile": "snapshots/op_airdrop.json"
+    },
+    {
+      "name": "Arb Early Users",
+      "chain": "arbitrum",
+      "type": "contract",
+      "contract": "0x0000000000000000000000000000000000000001",
+      "method": "getClaimAmount(address)"
+    }
+  ]
+}
