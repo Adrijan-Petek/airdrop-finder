@@ -4,6 +4,7 @@
 
 > Airdrop Finder scans a list of wallets across **Base**, **Optimism**, and **Arbitrum** and reports which wallets are eligible to claim configured airdrops. Designed to run daily via GitHub Actions and optionally post reports to a webhook (Discord/Slack).
 
+
 ---
 
 ## ✨ Highlights
