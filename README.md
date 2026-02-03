@@ -1,38 +1,37 @@
+![Airdrop Finder Banner](airdrop-finder.png)
+
 # Airdrop Finder
 
-Automated, config-driven airdrop eligibility scans across Base, Optimism, and Arbitrum with daily GitHub Actions runs and a GitHub Pages dashboard.
+Automated, config-driven airdrop eligibility scans across Base, Optimism, and Arbitrum. Includes daily GitHub Actions automation and a GitHub Pages dashboard for the latest report.
 
 ---
 
 ## Overview
 
-Airdrop Finder scans a set of wallets against configured airdrops and generates timestamped JSON reports. It supports:
-
-- Contract-based checks with customizable method signatures and arguments.
-- Snapshot-based checks using JSON lists or maps.
-- Daily automation via GitHub Actions, with optional webhook delivery.
-- A professional, static Next.js dashboard optimized for GitHub Pages.
+Airdrop Finder scans configured wallets against configured airdrops, produces timestamped JSON reports, and optionally posts results to a webhook. It is built to run unattended with GitHub Actions and publish a static dashboard using Next.js export.
 
 ---
 
-## Highlights
+## Features
 
 - Multi-chain support: Base, Optimism, Arbitrum.
-- Flexible airdrop config: custom ABI method + args, return types, rate limits.
-- Snapshot formats: address maps, arrays, or object entries with custom fields.
-- Daily automation: scheduled GitHub Actions scan + report commit.
-- GitHub Pages site: static Next.js export, auto-deployed.
+- Contract airdrops: custom ABI method, arguments, return type.
+- Snapshot airdrops: supports JSON maps or arrays with custom field names.
+- Rate limiting per airdrop to avoid RPC throttling.
+- CLI filters: scan by chain, wallet, or airdrop name.
+- Daily workflow that commits reports to the repo.
+- GitHub Pages dashboard (static export).
 
 ---
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-username/airdrop-finder.git
+git clone https://github.com/Adrijan-Petek/airdrop-finder.git
 cd airdrop-finder
 npm install
 cp .env.example .env
-# edit .env to add your RPC URLs and webhook if needed
+# edit .env with RPC endpoints
 npm run scan:once
 ls reports
 ```
@@ -77,20 +76,20 @@ Edit `config/airdrops.config.json` to add or modify airdrops.
 }
 ```
 
-### Fields (summary)
+### Field reference (summary)
 
-- `enabled`: set to `false` to disable an airdrop.
+- `enabled`: set `false` to disable.
 - `chain`: `base`, `optimism`, `arbitrum`.
 - `type`: `contract` or `snapshot`.
-- `method`: contract method signature, e.g. `claimable(address)`.
+- `method`: method signature, e.g. `claimable(address)`.
 - `returnType`: `uint256` or `bool`.
-- `args`: array of args; use `wallet` or `$wallet` to inject the current wallet.
-- `minClaimable`: minimum raw amount required to include.
+- `args`: array of args, use `wallet` or `$wallet` to inject the wallet.
+- `minClaimable`: minimum raw amount required to include in report.
 - `decimals` / `symbol`: used for formatted output.
-- `rateLimitMs`: delay between calls to avoid RPC throttling.
-- `snapshotAddressField` / `snapshotAmountField`: used when snapshot is an array of objects.
+- `rateLimitMs`: delay between RPC calls.
+- `snapshotAddressField` / `snapshotAmountField`: for snapshots as array entries.
 
-Wallets live in `data/wallets.json` (array of addresses). Override with `WALLETS_FILE`.
+Wallets live in `data/wallets.json`. Override with `WALLETS_FILE`.
 
 ---
 
@@ -113,22 +112,22 @@ Wallets live in `data/wallets.json` (array of addresses). Override with `WALLETS
 
 ### Daily scan workflow
 
-The scheduled workflow runs every day at 09:00 UTC and commits the generated report into `reports/`.
+Runs every day at 09:00 UTC and commits the report into `reports/`.
 
-Secrets required:
+Required GitHub secrets:
 
 - `BASE_RPC`, `OP_RPC`, `ARBITRUM_RPC`
 - `REWARD_WEBHOOK` (optional)
 
 ### GitHub Pages dashboard
 
-The Next.js site in `web/` is built as a static export and deployed automatically on every push to `main`.
+The Next.js site in `web/` is exported as a static site and deployed on each push to `main`.
 
-To enable:
+Enable in GitHub:
 
-1. In GitHub, go to **Settings → Pages**.
-2. Select **GitHub Actions** as the source.
-3. Push to `main` or run the `Pages` workflow manually.
+1. **Settings → Pages**
+2. Source: **GitHub Actions**
+3. Push to `main` or run the `Pages` workflow manually
 
 ---
 
