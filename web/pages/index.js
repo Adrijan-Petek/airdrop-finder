@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const repoUrl = 'https://github.com/Adrijan-Petek/airdrop-finder';
 
 function formatNumber(value) {
   if (value === null || value === undefined) return '0';
@@ -36,7 +37,7 @@ export default function Home() {
       <header className="nav">
         <div className="logo">Airdrop Finder</div>
         <nav className="links">
-          <a href="https://github.com" rel="noreferrer" target="_blank">
+          <a href={repoUrl} rel="noreferrer" target="_blank">
             GitHub
           </a>
           <a href="#how">How it works</a>
@@ -56,7 +57,7 @@ export default function Home() {
             <a className="button primary" href="#report">
               View latest report
             </a>
-            <a className="button ghost" href="https://github.com" rel="noreferrer" target="_blank">
+            <a className="button ghost" href={repoUrl} rel="noreferrer" target="_blank">
               View repository
             </a>
           </div>
@@ -175,7 +176,7 @@ export default function Home() {
             scans. You’ll have a transparent, auditable ledger of eligibility checks.
           </p>
         </div>
-        <a className="button primary" href="https://github.com" rel="noreferrer" target="_blank">
+        <a className="button primary" href={repoUrl} rel="noreferrer" target="_blank">
           Get started
         </a>
       </section>
