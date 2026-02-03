@@ -5,20 +5,32 @@
       "chain": "base",
       "type": "contract",
       "contract": "0x0000000000000000000000000000000000000000",
-      "method": "claimable(address)"
+      "method": "claimable(address)",
+      "returnType": "uint256",
+      "decimals": 18,
+      "symbol": "BASE",
+      "minClaimable": "1"
     },
     {
       "name": "OP Snapshot Drop",
       "chain": "optimism",
       "type": "snapshot",
-      "snapshotFile": "snapshots/op_airdrop.json"
+      "snapshotFile": "snapshots/op_airdrop.json",
+      "snapshotAddressField": "wallet",
+      "snapshotAmountField": "amount",
+      "decimals": 18,
+      "symbol": "OP"
     },
     {
       "name": "Arb Early Users",
       "chain": "arbitrum",
       "type": "contract",
       "contract": "0x0000000000000000000000000000000000000001",
-      "method": "getClaimAmount(address)"
+      "method": "getClaimAmount(address)",
+      "returnType": "uint256",
+      "decimals": 18,
+      "symbol": "ARB",
+      "rateLimitMs": 150
     }
   ]
 }

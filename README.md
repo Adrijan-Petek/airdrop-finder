@@ -1,22 +1,31 @@
 # Airdrop Finder
 
-[![Daily Scan](https://img.shields.io/badge/scan-daily-brightgreen)](./.github/workflows/daily-airdrop.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-
-> Airdrop Finder scans a list of wallets across **Base**, **Optimism**, and **Arbitrum** and reports which wallets are eligible to claim configured airdrops. Designed to run daily via GitHub Actions and optionally post reports to a webhook (Discord/Slack).
-
+Automated, config-driven airdrop eligibility scans across Base, Optimism, and Arbitrum with daily GitHub Actions runs and a GitHub Pages dashboard.
 
 ---
 
-## ✨ Highlights
-- Multi-chain: Base, Optimism, Arbitrum
-- Config-driven: add new airdrops via `airdrops.config.json`
-- Two airdrop types supported: **contract** (on-chain claimable calls) and **snapshot** (precomputed lists)
-- Outputs timestamped JSON reports in `reports/`
-- GitHub Actions workflow for daily scans included (uses `npm install` to avoid CI lockfile issues)
+## Overview
+
+Airdrop Finder scans a set of wallets against configured airdrops and generates timestamped JSON reports. It supports:
+
+- Contract-based checks with customizable method signatures and arguments.
+- Snapshot-based checks using JSON lists or maps.
+- Daily automation via GitHub Actions, with optional webhook delivery.
+- A professional, static Next.js dashboard optimized for GitHub Pages.
 
 ---
 
-## 🚀 Quick start (copy/paste)
+## Highlights
+
+- Multi-chain support: Base, Optimism, Arbitrum.
+- Flexible airdrop config: custom ABI method + args, return types, rate limits.
+- Snapshot formats: address maps, arrays, or object entries with custom fields.
+- Daily automation: scheduled GitHub Actions scan + report commit.
+- GitHub Pages site: static Next.js export, auto-deployed.
+
+---
+
+## Quick Start
 
 ```bash
 git clone https://github.com/your-username/airdrop-finder.git
@@ -26,110 +35,126 @@ cp .env.example .env
 # edit .env to add your RPC URLs and webhook if needed
 npm run scan:once
 ls reports
-cat reports/airdrop-report-*.json | jq
 ```
 
-> Node 18+ is required (for global `fetch` and ESM compatibility with ethers v6).
+Node 18+ is required.
 
 ---
 
-## 🧭 Project structure
+## Configuration
+
+Edit `config/airdrops.config.json` to add or modify airdrops.
+
+### Contract airdrop
+
+```json
+{
+  "name": "Base Community Drop",
+  "chain": "base",
+  "type": "contract",
+  "contract": "0x0000000000000000000000000000000000000000",
+  "method": "claimable(address)",
+  "returnType": "uint256",
+  "args": ["wallet"],
+  "minClaimable": "1",
+  "decimals": 18,
+  "symbol": "BASE"
+}
+```
+
+### Snapshot airdrop
+
+```json
+{
+  "name": "OP Snapshot Drop",
+  "chain": "optimism",
+  "type": "snapshot",
+  "snapshotFile": "snapshots/op_airdrop.json",
+  "snapshotAddressField": "wallet",
+  "snapshotAmountField": "amount",
+  "decimals": 18,
+  "symbol": "OP"
+}
+```
+
+### Fields (summary)
+
+- `enabled`: set to `false` to disable an airdrop.
+- `chain`: `base`, `optimism`, `arbitrum`.
+- `type`: `contract` or `snapshot`.
+- `method`: contract method signature, e.g. `claimable(address)`.
+- `returnType`: `uint256` or `bool`.
+- `args`: array of args; use `wallet` or `$wallet` to inject the current wallet.
+- `minClaimable`: minimum raw amount required to include.
+- `decimals` / `symbol`: used for formatted output.
+- `rateLimitMs`: delay between calls to avoid RPC throttling.
+- `snapshotAddressField` / `snapshotAmountField`: used when snapshot is an array of objects.
+
+Wallets live in `data/wallets.json` (array of addresses). Override with `WALLETS_FILE`.
+
+---
+
+## CLI Options
+
+```
+--airdrop "<name>"          Filter by airdrop name (partial match)
+--chains base,optimism      Filter by chain
+--wallet 0x...              Scan a single wallet
+--wallets-file path.json    Use a custom wallets file
+--min-claimable 1000        Minimum raw claimable amount
+--include-zero              Include zero results in report
+--dry-run                   Skip contract calls (snapshot only)
+--report-dir path           Custom report output directory
+```
+
+---
+
+## Automation
+
+### Daily scan workflow
+
+The scheduled workflow runs every day at 09:00 UTC and commits the generated report into `reports/`.
+
+Secrets required:
+
+- `BASE_RPC`, `OP_RPC`, `ARBITRUM_RPC`
+- `REWARD_WEBHOOK` (optional)
+
+### GitHub Pages dashboard
+
+The Next.js site in `web/` is built as a static export and deployed automatically on every push to `main`.
+
+To enable:
+
+1. In GitHub, go to **Settings → Pages**.
+2. Select **GitHub Actions** as the source.
+3. Push to `main` or run the `Pages` workflow manually.
+
+---
+
+## Project Structure
+
 ```
 airdrop-finder/
 ├─ .github/workflows/
 │  ├─ daily-airdrop.yml
-│  └─ ci.yml
-├─ src/
-│  └─ airdrops.js
-├─ snapshots/
-│  └─ op_airdrop.json
+│  └─ pages.yml
 ├─ config/
 │  └─ airdrops.config.json
 ├─ data/
 │  └─ wallets.json
 ├─ reports/
-├─ package.json
-├─ .env.example
-├─ vercel.json
-└─ README.md
+├─ src/
+│  └─ airdrops.js
+└─ web/
+   ├─ pages/
+   ├─ public/
+   ├─ scripts/
+   └─ styles/
 ```
 
 ---
 
-## ⚙️ Configure
-
-1. Edit `config/airdrops.config.json` to add or modify airdrops. Each airdrop supports either a `contract` with a `method` (defaults to `claimable(address)`) or `snapshotFile` (path under `snapshots/`). Example:
-
-```json
-{
-  "airdrops": [
-    {
-      "name": "Base Community Drop",
-      "chain": "base",
-      "type": "contract",
-      "contract": "0x0000000000000000000000000000000000000000",
-      "method": "claimable(address)"
-    },
-    {
-      "name": "OP Snapshot Drop",
-      "chain": "optimism",
-      "type": "snapshot",
-      "snapshotFile": "snapshots/op_airdrop.json"
-    }
-  ]
-}
-```
-
-2. Put wallets to monitor in `data/wallets.json` (array of checksummed addresses).
-
-3. Set RPCs and webhook in `.env` (or in GitHub Secrets for Actions). See `.env.example` for keys.
-
----
-
-## 🛠 How it works (high level)
-
-- Loads wallet list and airdrop config.
-- For each airdrop and each wallet:
-  - If `type` is `contract`, it calls the configured `method` on the contract (e.g. `claimable(address)`) and treats non-zero as claimable.
-  - If `type` is `snapshot`, it looks up the wallet in the snapshot file and reports the amount if present.
-- Produces `reports/airdrop-report-<timestamp>.json` with findings.
-- Optionally posts the report to `SCAN_WEBHOOK_URL` when set.
-
----
-
-## 📡 GitHub Actions
-
-A daily workflow `./github/workflows/daily-airdrop.yml` runs every day at 09:00 UTC. It uses `npm install` (not `npm ci`) to avoid failing in repos without `package-lock.json`.
-
-Secrets to configure in GitHub repository:
-- `BASE_RPC`, `OP_RPC`, `ARBITRUM_RPC` — RPC URLs for each chain
-- `REWARD_WEBHOOK` (optional) — webhook to POST the JSON report
-
----
-
-## 🧪 Example output (report excerpt)
-
-```json
-{
-  "generatedAt": "2025-09-28T11:22:33.000Z",
-  "results": [
-    {
-      "chain": "optimism",
-      "airdrop": "OP Snapshot Drop",
-      "wallet": "0x123...",
-      "claimable": "45000000000000000000"
-    }
-  ]
-}
-```
-
----
-
-## ✅ Next steps / ideas
-- Add token symbol/decimals normalization for nicer report output
-- Add retries and pagination for `getLogs` / large snapshot scanning
-- Build a Vercel dashboard to list reports and trigger scans manually
-
----
+## License
 
 MIT © Crypto Mobb

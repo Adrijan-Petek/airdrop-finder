@@ -1,0 +1,17 @@
+{
+  "name": "airdrop-finder-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:pages": "npm run prepare-report && next build",
+    "prepare-report": "node scripts/prepare-report.js",
+    "lint": "echo \"No linter configured\""
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  }
+}

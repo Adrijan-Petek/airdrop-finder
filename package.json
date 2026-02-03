@@ -5,7 +5,8 @@
   "main": "src/airdrops.js",
   "scripts": {
     "start": "node src/airdrops.js",
-    "scan:once": "node src/airdrops.js --once",
+    "scan:once": "node src/airdrops.js",
+    "scan:dry": "node src/airdrops.js --dry-run --include-zero",
     "lint": "echo \"No linter configured\""
   },
   "author": "Crypto Mobb",
